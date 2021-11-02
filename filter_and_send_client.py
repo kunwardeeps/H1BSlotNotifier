@@ -20,21 +20,16 @@ def get_env(name, message, cast=str):
 session = os.environ.get('TG_SESSION', 'printer')
 api_id = get_env('TG_API_ID', 'Enter your API ID: ', int)
 api_hash = get_env('TG_API_HASH', 'Enter your API hash: ')
-bot_token = get_env('TG_BOT_TOKEN', 'Enter your bot token: ')
-
 
 client = TelegramClient(session, api_id, api_hash, proxy=None).start()
-bot = TelegramClient('H1BSlotFinderBot', api_id, api_hash)
 
 @client.on(events.NewMessage(chats='Regular_H1B_H4_VisaSlotsChecking', pattern=r'^(?i)((?!na).)*$'))
 async def handler(event):
-    await bot.start(bot_token=bot_token)
-    entity = await bot.get_input_entity('kunwar11singh')
-    await bot.send_message(entity, event.message)
+    entity = await client.get_input_entity('H1BSlotNotifications')
+    await client.forward_messages(entity, event.message)
 
 try:
     print('(Press Ctrl+C to stop this)')
     client.run_until_disconnected()
 finally:
     client.disconnect()
-    bot.disconnect()
